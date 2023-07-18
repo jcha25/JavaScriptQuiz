@@ -4,9 +4,11 @@ endGameSection.style.display = "none"
 var opener = document.querySelector(".opener")
 var question = document.querySelector(".question")
 var choices = document.querySelector(".choices")
+var timerEl = document.querySelector(".timerEl")
 
-var index = 0
-var scores = 0;
+var index = 0;
+var score = 0;
+var timeLeft = 50;
 
 var quizValues = [
     {
@@ -36,9 +38,14 @@ var quizValues = [
     }
 ]
 
-startBtn.addEventListener("click", function(event) {
+startBtn.addEventListener("click", function() {
     startQuiz(index)
+    setInterval(() => {
+        timeLeft--
+        timerEl.innerHTML = "Time: " + timeLeft
+    }, 1000) 
 })
+
 
 function startQuiz(index) {
     opener.style.display = "none"
@@ -48,6 +55,13 @@ function startQuiz(index) {
         var li = document.createElement('li')
          li.innerHTML = i
          choices.append(li)
+         li.addEventListener("click", function() {
+            if(li.innerHTML === quizValues[index].correct) {
+                score = score + 20
+            } else {
+                timeLeft = timeLeft - 10
+            }
+         })
     })
-    // event.target
+    
 }
