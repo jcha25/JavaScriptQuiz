@@ -5,10 +5,15 @@ var opener = document.querySelector(".opener")
 var question = document.querySelector(".question")
 var choices = document.querySelector(".choices")
 var timerEl = document.querySelector(".timerEl")
+var quiz = document.querySelector(".quiz")
+var output = document.querySelector(".output")
+var initialsInput = document.querySelector(".initialsInput")
+var sbmtBtn = document.querySelector(".sbmtBtn")
 
 var index = 0;
 var score = 0;
-var timeLeft = 50;
+var timeLeft = 2;
+let time;
 
 var quizValues = [
     {
@@ -18,8 +23,8 @@ var quizValues = [
     },
     {
         question: "What is a CSS file for?",
-        choices: ["A. functionality", "B. skelaton of page", "C. styling", "D. Math"],
-        correct: "C. Styling"
+        choices: ["A. functionality", "B. skeleton of page", "C. styling", "D. Math"],
+        correct: "C. styling"
     },
     {
         question: "which tag do we use to link a js file to html?",
@@ -38,30 +43,63 @@ var quizValues = [
     }
 ]
 
-startBtn.addEventListener("click", function() {
+startBtn.addEventListener("click", function () {
     startQuiz(index)
-    setInterval(() => {
+    time = setInterval(function() {
         timeLeft--
         timerEl.innerHTML = "Time: " + timeLeft
-    }, 1000) 
+    }, 1000)
+    if(timeLeft === 0) {
+        clearInterval(time)
+        timerEl.innerHTML = "Times Up!"
+        endGame()
+    }
 })
-
 
 function startQuiz(index) {
     opener.style.display = "none"
+    choices.innerHTML = ""
     question.innerHTML = quizValues[index].question
     var choiceSet = quizValues[index].choices;
-    choiceSet.forEach(function(i) {
+    choiceSet.forEach(function (i) {
         var li = document.createElement('li')
-         li.innerHTML = i
-         choices.append(li)
-         li.addEventListener("click", function() {
-            if(li.innerHTML === quizValues[index].correct) {
+        li.innerHTML = i
+        choices.append(li)
+        li.addEventListener("click", function () {
+            if (li.innerHTML === quizValues[index].correct) {
                 score = score + 20
+                console.log("correct")
             } else {
                 timeLeft = timeLeft - 10
             }
-         })
+            index++
+            if (index >= quizValues.length) {
+                index = 0
+                endGame()
+            } else {
+                startQuiz(index)
+            }
+        })
     })
-    
 }
+
+var scoresHistory = JSON.parse(localStorage.getItem("scores")) || []
+
+function endGame() {
+    timerEl.innerHTML = "Game Over"
+    quiz.style.display = "none"
+    endGameSection.style.display = "block"
+    output.innerHTML = "You got a score of: " + score
+    sbmtBtn.addEventListener("click", function () {
+        var initials = initialsInput.value
+        var info = {
+            initials: initials,
+            score: score
+        }
+        scoresHistory.push(info)
+        console.log(scoresHistory)
+        localStorage.setItem("scores", JSON.stringify(scoresHistory))
+    })
+}
+
+// 0625
