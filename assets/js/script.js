@@ -12,7 +12,7 @@ var sbmtBtn = document.querySelector(".sbmtBtn")
 
 var index = 0;
 var score = 0;
-var timeLeft = 2;
+var timeLeft = 50;
 let time;
 
 var quizValues = [
@@ -48,13 +48,16 @@ startBtn.addEventListener("click", function () {
     time = setInterval(function() {
         timeLeft--
         timerEl.innerHTML = "Time: " + timeLeft
+        if(timeLeft <= 0) {
+            timerEl.innerHTML = "Times Up!"
+            clearInterval(time)
+            setTimeout(() => {
+                endGame()
+            }, 2000);
+        }
     }, 1000)
-    if(timeLeft === 0) {
-        clearInterval(time)
-        timerEl.innerHTML = "Times Up!"
-        endGame()
-    }
 })
+
 
 function startQuiz(index) {
     opener.style.display = "none"
